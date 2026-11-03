@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>VoltKart – Electrical Accessories & Gadgets</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--r:#d62828;--o:#f77f00;--bg:#fff8f3;--card:#fff;--tx:#2b1a14;--mu:#7a6358;--bd:#f1d9cb;--ok:#1b8a3e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#1c1210;--card:#2a1b17;--tx:#fbe9df;--mu:#c3a597;--bd:#4a312a}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--tx)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:linear-gradient(90deg,var(--r),var(--o));color:#fff;display:flex;gap:8px;align-items:center;padding:10px 14px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:1.3rem;letter-spacing:.5px}.sp{flex:1}
+button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:9px 14px;background:var(--r);color:#fff;font-weight:600}
+button.o{background:var(--o)}button.g{background:transparent;border:1px solid currentColor}button:disabled{opacity:.5}
+header button{background:rgba(255,255,255,.2)}
+input,select{font:inherit;padding:9px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);width:100%}
+main{max-width:1100px;margin:auto;padding:14px}
+.hero{background:linear-gradient(120deg,var(--r),var(--o));color:#fff;border-radius:16px;padding:26px 20px;margin-bottom:14px}
+.hero h1{margin:0 0 6px;font-size:1.7rem}.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px}
+.chip{background:var(--card);color:var(--tx);border:1px solid var(--bd);white-space:nowrap}.chip.on{background:var(--o);color:#fff;border-color:var(--o)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.em{font-size:2.6rem;text-align:center;background:linear-gradient(135deg,#ffe3d1,#ffd0c4);border-radius:10px;padding:10px}
+.pr{color:var(--r);font-weight:800}.mu{color:var(--mu);font-size:.85rem}.row{display:flex;gap:6px}.row>*{flex:1}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:10;display:none;align-items:flex-end;justify-content:center}.ov.on{display:flex}
+.sheet{background:var(--bg);width:100%;max-width:560px;max-height:92%;overflow:auto;border-radius:18px 18px 0 0;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+@media(min-width:700px){.ov{align-items:center}.sheet{border-radius:18px}}
+.sheet h3{margin:0 0 10px;color:var(--r)}.line{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--bd)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+.stat{background:var(--card);border:1px solid var(--bd);border-left:5px solid var(--o);border-radius:12px;padding:12px}.stat b{display:block;font-size:1.5rem;color:var(--r)}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.88rem;min-width:520px}th,td{text-align:left;padding:7px;border-bottom:1px solid var(--bd)}
+.tag{padding:2px 8px;border-radius:99px;font-size:.75rem;font-weight:700;background:#ffe3a3;color:#7a4a00}.tag.verified{background:#c8f0d3;color:#0c5a24}.tag.cancelled{background:#ffd0d0;color:#8a1010}
+.low{color:var(--r);font-weight:700}.pay{display:flex;gap:8px}.pay label{flex:1;border:2px solid var(--bd);border-radius:10px;padding:10px;text-align:center;cursor:pointer;font-weight:700}
+.pay input{display:none}.pay input:checked+span{color:var(--r)}.pay label:has(input:checked){border-color:var(--o);background:#fff0e3;color:#b23a00}
+.live{display:inline-block;width:9px;height:9px;border-radius:50%;background:#2ecc71;margin-right:6px;animation:p 1.4s infinite}@keyframes p{50%{opacity:.3}}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:99px;z-index:20;display:none}
+.msg{color:var(--r);font-size:.85rem;min-height:1.1em}
+</style></head><body>
+<header><span class="logo">⚡ VoltKart</span><span class="sp"></span>
+<button id="bAdm" onclick="openAdmin()">Admin</button><button id="bAcc" onclick="openAuth()">Login</button><button onclick="show('cart')">🛒 <span id="cc">0</span></button></header>
+<main id="shop">
+<div class="hero"><h1>Power up your life</h1><div>Chargers, cables, smart plugs, LEDs & more. Pay with bKash or Nagad. Try code <b>WELCOME10</b>.</div></div>
+<input id="q" placeholder="Search products…" oninput="draw()" style="margin-bottom:10px">
+<div class="chips" id="chips"></div><div class="grid" id="grid"></div></main>
+<main id="admin" hidden></main>
+
+<div class="ov" id="o-cart"><div class="sheet"><h3>Your Cart</h3><div id="cartBody"></div>
+<div class="row" style="margin:10px 0"><input id="promo" placeholder="Promo code"><button class="o" onclick="applyPromo()">Apply</button></div><div class="msg" id="pm"></div>
+<div id="tot"></div><div class="row" style="margin-top:10px"><button class="g" style="color:var(--r)" onclick="hide('cart')">Close</button><button onclick="checkout(cart)">Checkout</button></div></div></div>
+
+<div class="ov" id="o-co"><div class="sheet"><h3>Checkout</h3><div id="coSum"></div>
+<div style="display:grid;gap:8px;margin-top:10px"><input id="cn" placeholder="Full name"><input id="cp" placeholder="Phone (01XXXXXXXXX)" inputmode="tel"><input id="ca" placeholder="Delivery address">
+<div class="pay"><label><input type="radio" name="pm" value="bKash" checked><span>bKash</span></label><label><input type="radio" name="pm" value="Nagad"><span>Nagad</span></label></div>
+<div class="mu" id="payInfo"></div><input id="tx" placeholder="Transaction ID (e.g. 9A7B3C2D1E)" autocapitalize="characters" maxlength="14">
+<div class="msg" id="cm"></div><div class="row"><button class="g" style="color:var(--r)" onclick="hide('co')">Back</button><button id="pay" onclick="placeOrder()">Confirm payment</button></div></div></div></div>
+
+<div class="ov" id="o-auth"><div class="sheet"><h3 id="aT">Login</h3><div id="aForm" style="display:grid;gap:8px"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const MERCHANT={bKash:'01700-000000',Nagad:'01800-000000'},ADMIN_PIN='admin123',LOW=10;
+const P=[['Fast Charger 33W','🔌',850,'Chargers',40],['USB-C Cable 1m','🔗',250,'Cables',120],['Smart Wi-Fi Plug','💡',690,'Smart Home',35],['LED Bulb 12W (2pk)','💡',420,'Lighting',80],['Power Strip 4-Socket','🔋',980,'Power',25],['20000mAh Power Bank','🔋',2450,'Power',18],['Wireless Earbuds','🎧',1890,'Gadgets',30],['Bluetooth Speaker','🔊',2290,'Gadgets',14],['Digital Multimeter','📟',1350,'Tools',22],['HDMI Cable 2m','📺',520,'Cables',60],['Car Charger Dual USB','🚗',480,'Chargers',50],['Smart LED Strip 5m','🌈',1590,'Lighting',9]].map((a,i)=>({id:'p'+i,n:a[0],e:a[1],p:a[2],c:a[3],s:a[4]}));
+const SEED_PROMOS=[{code:'WELCOME10',pct:10,exp:'2026-12-31'},{code:'DIWALI15',pct:15,exp:'2026-11-15'},{code:'FLASH20',pct:20,exp:'2026-10-31'}];
+const $=i=>document.getElementById(i),LS=(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},SV=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const tk=n=>'৳'+Math.round(n).toLocaleString('en-US'),esc=s=>String(s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+let cart=LS('vk_cart',[]),cat='All',promo=null,co=[],D={orders:LS('vk_o',[]),stock:LS('vk_s',{}),promos:LS('vk_p',[])},db=null,room=null,me=null,sess=LS('vk_sess',null),adminOK=false,visitors=1;
+const stock=id=>id in D.stock?D.stock[id]:P.find(p=>p.id==id).s,allPromos=()=>SEED_PROMOS.concat(D.promos);
+function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2600)}
+function show(n){if(n=='cart')drawCart();$('o-'+n).classList.add('on')}function hide(n){$('o-'+n).classList.remove('on')}
+/* ---------- data layer: shared db when available, else this browser only ---------- */
+async function saveOrder(o){if(db)await db.collection('orders').doc(o.id).set(o);else{D.orders=D.orders.filter(x=>x.id!=o.id).concat(o);SV('vk_o',D.orders)}}
+async function saveStock(){if(db)await db.doc('meta/stock').set(D.stock);else SV('vk_s',D.stock)}
+async function savePromo(p){if(db)await db.collection('promos').doc(p.code).set(p);else{D.promos.push(p);SV('vk_p',D.promos)}}
+async function initRuntime(){try{if(!window.claude)return;db=await claude.use('db');me=await claude.use('user');room=await claude.use('room');
+ if(db){db.collection('orders').onSnapshot(s=>{D.orders=s.docs.map(d=>d.data());refresh()},()=>{});db.doc('meta/stock').onSnapshot(s=>{D.stock=s.data()||{};refresh()},()=>{});db.collection('promos').onSnapshot(s=>{D.promos=s.docs.map(d=>d.data());refresh()},()=>{})}
+ if(room){room.onPeers(p=>{visitors=Math.max(1,(p||[]).length+((p||[]).some(x=>x.isMe)?0:1));refresh()})}}catch(e){}}
+function refresh(){draw();if(!$('admin').hidden)drawAdmin()}
+/* ---------- auth (persistent via localStorage; demo-grade, client-side only) ---------- */
+async function hash(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('vk'+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function openAuth(mode){mode=mode||(sess?'out':'in');const f=$('aForm');$('aT').textContent=mode=='out'?'Hi, '+esc(sess.name):mode=='up'?'Create account':'Login';
+ if(mode=='out')f.innerHTML='<div class="mu">Signed in as '+esc(sess.email)+'. You stay logged in on this device.</div><button onclick="myOrders()">My orders</button><button class="g" style="color:var(--r)" onclick="logout()">Log out</button>';
+ else f.innerHTML=(mode=='up'?'<input id="an" placeholder="Name">':'')+'<input id="ae" type="email" placeholder="Email"><input id="ap" type="password" placeholder="Password (6+ chars)"><div class="msg" id="am"></div><button onclick="auth(\''+mode+'\')">'+(mode=='up'?'Sign up':'Login')+'</button><button class="g" style="color:var(--r)" onclick="openAuth(\''+(mode=='up'?'in':'up')+'\')">'+(mode=='up'?'Have an account? Login':'New here? Create account')+'</button>';
+ show('auth')}
+async function auth(m){const e=$('ae').value.trim().toLowerCase(),p=$('ap').value,U=LS('vk_users',{});
+ if(!/^\S+@\S+\.\S+$/.test(e)||p.length<6){$('am').textContent='Enter a valid email and 6+ character password.';return}
+ const h=await hash(p);if(m=='up'){if(U[e]){$('am').textContent='Account already exists.';return}U[e]={name:$('an').value.trim()||'Friend',h};SV('vk_users',U)}
+ else if(!U[e]||U[e].h!=h){$('am').textContent='Wrong email or password.';return}
+ sess={email:e,name:U[e].name};SV('vk_sess',sess);hide('auth');acc();toast('Welcome, '+sess.name)}
+function logout(){sess=null;localStorage.removeItem('vk_sess');hide('auth');acc()}
+function acc(){$('bAcc').textContent=sess?'👤 '+sess.name.split(' ')[0]:'Login'}
+function myOrders(){const l=D.orders.filter(o=>o.uid==sess.email).sort((a,b)=>b.ts-a.ts);$('aT').textContent='My orders';
+ $('aForm').innerHTML=l.length?l.map(o=>'<div class="line"><div><b>#'+o.id+'</b> <span class="mu">'+new Date(o.ts).toLocaleDateString()+'</span><br><span class="mu">'+o.items.map(i=>i.q+'× '+esc(i.n)).join(', ')+'</span></div><div style="text-align:right">'+tk(o.total)+'<br><span class="tag '+o.status+'">'+o.status+'</span></div></div>').join(''):'<div class="mu">No orders yet.</div>'}
+/* ---------- storefront ---------- */
+function draw(){const cats=['All',...new Set(P.map(p=>p.c))];$('chips').innerHTML=cats.map(c=>'<button class="chip '+(c==cat?'on':'')+'" onclick="cat=\''+c+'\';draw()">'+c+'</button>').join('');
+ const q=($('q').value||'').toLowerCase();$('grid').innerHTML=P.filter(p=>(cat=='All'||p.c==cat)&&p.n.toLowerCase().includes(q)).map(p=>{const s=stock(p.id);
+ return'<div class="card"><div class="em">'+p.e+'</div><b>'+p.n+'</b><div class="mu">'+p.c+' · '+(s>0?s+' in stock':'Out of stock')+'</div><div class="pr">'+tk(p.p)+'</div><div class="row"><button class="o" '+(s<1?'disabled':'')+' onclick="add(\''+p.id+'\')">Add</button><button '+(s<1?'disabled':'')+' onclick="buyNow(\''+p.id+'\')">Buy now</button></div></div>'}).join('');
+ $('cc').textContent=cart.reduce((a,i)=>a+i.q,0)}
+function add(id){const i=cart.find(x=>x.id==id);if(i){if(i.q>=stock(id))return toast('Max stock reached');i.q++}else cart.push({id,q:1});SV('vk_cart',cart);draw();toast('Added to cart')}
+function buyNow(id){checkout([{id,q:1}])}
+function lines(l){return l.map(i=>{const p=P.find(x=>x.id==i.id);return{id:i.id,n:p.n,p:p.p,q:i.q}})}
+function calc(l){const sub=lines(l).reduce((a,i)=>a+i.p*i.q,0),d=promo?Math.round(sub*promo.pct/100):0;return{sub,d,t:sub-d}}
+function drawCart(){const L=lines(cart);$('cartBody').innerHTML=L.length?L.map(i=>'<div class="line"><div>'+esc(i.n)+'<br><span class="mu">'+tk(i.p)+'</span></div><div class="row" style="flex:none;align-items:center"><button class="g" style="color:var(--r);padding:4px 10px" onclick="qty(\''+i.id+'\',-1)">−</button><b>'+i.q+'</b><button class="g" style="color:var(--r);padding:4px 10px" onclick="qty(\''+i.id+'\',1)">+</button></div></div>').join(''):'<div class="mu">Your cart is empty.</div>';
+ const c=calc(cart);$('tot').innerHTML='<div class="line"><span>Subtotal</span><span>'+tk(c.sub)+'</span></div>'+(promo?'<div class="line"><span>Promo '+promo.code+' (−'+promo.pct+'%)</span><span>−'+tk(c.d)+'</span></div>':'')+'<div class="line"><b>Total</b><b class="pr">'+tk(c.t)+'</b></div>'}
+function qty(id,d){const i=cart.find(x=>x.id==id);i.q+=d;if(i.q>stock(id)){i.q=stock(id);toast('Max stock reached')}if(i.q<1)cart=cart.filter(x=>x!=i);SV('vk_cart',cart);drawCart();draw()}
+function applyPromo(){const c=$('promo').value.trim().toUpperCase(),p=allPromos().find(x=>x.code==c);promo=null;
+ if(!p)$('pm').textContent='Invalid promo code.';else if(new Date(p.exp+'T23:59:59')<new Date())$('pm').textContent='This code expired on '+p.exp+'.';
+ else{promo=p;$('pm').textContent='';toast('Promo applied: '+p.pct+'% off')}drawCart()}
+function checkout(l){if(!l.length)return toast('Cart is empty');if(!sess){hide('cart');toast('Please login to checkout');return openAuth('in')}
+ co=l;hide('cart');const c=calc(l);$('coSum').innerHTML=lines(l).map(i=>'<div class="line"><span>'+i.q+'× '+esc(i.n)+'</span><span>'+tk(i.p*i.q)+'</span></div>').join('')+(promo?'<div class="line"><span>Promo '+promo.code+'</span><span>−'+tk(c.d)+'</span></div>':'')+'<div class="line"><b>Total</b><b class="pr">'+tk(c.t)+'</b></div>';
+ $('cn').value=sess.name;payInfo();$('cm').textContent='';$('tx').value='';show('co')}
+function payInfo(){const m=document.querySelector('[name=pm]:checked').value;$('payInfo').innerHTML='Send <b>'+tk(calc(co).t)+'</b> via <b>'+m+'</b> (Send Money) to <b>'+MERCHANT[m]+'</b>, then enter the Transaction ID below.'}
+document.addEventListener('change',e=>{if(e.target.name=='pm')payInfo()});
+async function placeOrder(){const m=document.querySelector('[name=pm]:checked').value,t=$('tx').value.trim().toUpperCase(),err=x=>{$('cm').textContent=x;return 0};
+ if(!$('cn').value.trim()||!/^01\d{9}$/.test($('cp').value.replace(/\D/g,''))||!$('ca').value.trim())return err('Enter name, valid BD phone and address.');
+ if(!/^[A-Z0-9]{8,14}$/.test(t))return err('Transaction ID must be 8–14 letters/numbers.');
+ if(D.orders.some(o=>o.trx==t))return err('This Transaction ID was already used.');
+ for(const i of co)if(i.q>stock(i.id))return err('Some items are no longer in stock.');
+ if(promo&&new Date(promo.exp+'T23:59:59')<new Date()){promo=null;return err('Promo expired. Please re-apply.')}
+ const c=calc(co),o={id:'VK'+Date.now().toString(36).toUpperCase(),uid:sess.email,name:$('cn').value.trim(),phone:$('cp').value.trim(),addr:$('ca').value.trim(),items:lines(co),sub:c.sub,disc:c.d,total:c.t,code:promo?promo.code:'',method:m,trx:t,status:'pending',ts:Date.now()};
+ $('pay').disabled=true;try{await saveOrder(o);co.forEach(i=>D.stock[i.id]=stock(i.id)-i.q);await saveStock();
+ if(co===cart){cart=[];SV('vk_cart',cart)}hide('co');draw();toast('Order '+o.id+' placed! Payment under verification.')}catch(e){err('Could not save order. Try again.')}$('pay').disabled=false}
+/* ---------- admin ---------- */
+async function openAdmin(){if(!$('admin').hidden){$('admin').hidden=true;$('shop').hidden=false;return}
+ const ok=adminOK||(me&&db?(me.canEdit()||me.isOwner()):prompt('Admin PIN (local demo mode):')===ADMIN_PIN);
+ if(!ok)return toast('Admin access denied');adminOK=true;$('shop').hidden=true;$('admin').hidden=false;drawAdmin()}
+function drawAdmin(){const today=new Date().toDateString(),O=D.orders,td=O.filter(o=>o.status!='cancelled'&&new Date(o.ts).toDateString()==today),rev=td.reduce((a,o)=>a+o.total,0),units=P.reduce((a,p)=>a+stock(p.id),0);
+ const pend=O.filter(o=>o.status=='pending').length;
+ $('admin').innerHTML='<h2 style="color:var(--r)">Admin Dashboard</h2><div class="stats"><div class="stat">Live visitors<b><span class="live"></span>'+visitors+'</b></div><div class="stat">Today\'s revenue<b>'+tk(rev)+'</b></div><div class="stat">Total units in stock<b>'+units+'</b></div><div class="stat">Cancelled orders<b>'+O.filter(o=>o.status=='cancelled').length+'</b></div><div class="stat">Pending verification<b>'+pend+'</b></div></div>'+
+ '<h3>Inventory</h3><div class="tw"><table><tr><th>Product</th><th>Category</th><th>Qty</th><th>Set qty</th></tr>'+P.map(p=>{const s=stock(p.id);return'<tr><td>'+p.e+' '+p.n+'</td><td>'+p.c+'</td><td class="'+(s<LOW?'low':'')+'">'+s+(s<LOW?' ⚠ low':'')+'</td><td><input type="number" min="0" value="'+s+'" style="width:80px" onchange="setStock(\''+p.id+'\',this.value)"></td></tr>'}).join('')+'</table></div>'+
+ '<h3>Orders & payment verification</h3><div class="tw"><table><tr><th>Order</th><th>Customer</th><th>Total</th><th>Method / TrxID</th><th>Status</th><th></th></tr>'+(O.slice().sort((a,b)=>b.ts-a.ts).map(o=>'<tr><td>'+o.id+'<br><span class="mu">'+new Date(o.ts).toLocaleString()+'</span></td><td>'+esc(o.name)+'<br><span class="mu">'+esc(o.phone)+'</span></td><td>'+tk(o.total)+'</td><td>'+o.method+'<br><b>'+esc(o.trx)+'</b></td><td><span class="tag '+o.status+'">'+o.status+'</span></td><td>'+(o.status=='pending'?'<button style="padding:5px 9px;background:var(--ok)" onclick="setSt(\''+o.id+'\',\'verified\')">Verify</button> ':'')+(o.status!='cancelled'?'<button style="padding:5px 9px" onclick="setSt(\''+o.id+'\',\'cancelled\')">Cancel</button>':'')+'</td></tr>').join('')||'<tr><td colspan="6" class="mu">No orders yet.</td></tr>')+'</table></div>'+
+ '<h3>Promo codes</h3><div class="row" style="flex-wrap:wrap"><input id="nc" placeholder="CODE"><input id="np" type="number" placeholder="% off"><input id="ne" type="date"><button class="o" onclick="newPromo()">Add</button></div><div class="tw"><table><tr><th>Code</th><th>Discount</th><th>Expires</th><th>Status</th></tr>'+allPromos().map(p=>'<tr><td>'+esc(p.code)+'</td><td>'+p.pct+'%</td><td>'+p.exp+'</td><td>'+(new Date(p.exp+'T23:59:59')<new Date()?'<span class="tag cancelled">expired</span>':'<span class="tag verified">active</span>')+'</td></tr>').join('')+'</table></div>'}
+async function setStock(id,v){D.stock[id]=Math.max(0,parseInt(v)||0);await saveStock();refresh()}
+async function setSt(id,s){const o=D.orders.find(x=>x.id==id);if(s=='cancelled'&&!confirm('Cancel order '+id+' and restock items?'))return;
+ if(s=='cancelled')o.items.forEach(i=>D.stock[i.id]=stock(i.id)+i.q);o.status=s;await saveOrder(o);if(s=='cancelled')await saveStock();refresh()}
+async function newPromo(){const code=$('nc').value.trim().toUpperCase(),pct=+$('np').value,exp=$('ne').value;if(!code||!(pct>0&&pct<=90)||!exp)return toast('Fill code, % (1–90) and expiry');await savePromo({code,pct,exp});refresh()}
+acc();draw();initRuntime();
+</script></body></html>
